@@ -1,0 +1,37 @@
+cluster_name: "talos-proxmox-cluster"
+proxmox_node: "pve-03"
+iso_file_id: "local:iso/nocloud-amd64.iso"
+nodes:
+  - name: "talos-cp01"
+    role: "controlplane"
+    ip: "10.0.0.11"
+    cidr: 24
+    gateway: "10.0.0.1"
+    dns: "1.1.1.1"
+    vlan: 5
+    cpu: 2
+    memory: 4096
+    disksize: 40
+    datastore: "local-lvm"
+  - name: "talos-wn01"
+    role: "worker"
+    ip: "10.0.0.21"
+    cidr: 24
+    gateway: "10.0.0.1"
+    dns: "1.1.1.1"
+    vlan: 5
+    cpu: 4
+    memory: 8192
+    disksize: 40
+    datastore: "local-lvm"
+  - name: "talos-wn02"
+    role: "worker"
+    ip: "10.0.0.22"
+    cidr: 24
+    gateway: "10.0.0.1"
+    dns: "1.1.1.1"
+    vlan: 5
+    cpu: 4
+    memory: 8192
+    disksize: 40
+    datastore: "local-lvm"

@@ -1,0 +1,32 @@
+# Pulumi
+.pulumi/
+Pulumi.*.yaml.bak
+Pulumi.*.yaml
+nodes.yaml
+
+# Go build outputs
+bin/
+obj/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# Generated Cluster Credentials (CRITICAL)
+kubeconfig.yaml
+kubeconfig*
+talosconfig
+*.pem
+*.key
+*.crt
+
+# IDE and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
