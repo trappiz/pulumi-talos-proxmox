@@ -56,6 +56,10 @@ export PROXMOX_VE_ENDPOINT="https://<YOUR_PROXMOX_IP>:8006/"
 export PROXMOX_VE_USERNAME="root@pam"
 export PROXMOX_VE_PASSWORD="<YOUR_PASSWORD>"
 export PROXMOX_VE_INSECURE="true" # Required if using self-signed certs
+
+# Set password inside quotes, leave empty for now password.
+# This is required for "pulumi stack output kubeconfig" to work later on.
+export PULUMI_CONFIG_PASSPHRASE=""
 ```
 
 ### 2. Initialize and Deploy
