@@ -80,8 +80,9 @@ Once the pulumi up command finishes successfully, the generated kubeconfig is se
 To extract it and connect to your new Kubernetes cluster:
 ```bash
 
-# 1. Extract the kubeconfig from the Pulumi stack
+# 1. Extract talosconfig and kubeconfig from the Pulumi stack
 pulumi stack output kubeconfig --show-secrets > kubeconfig.yaml
+pulumi stack output talosconfig --show-secrets > talosconfig
 
 # 2. Point kubectl to the extracted file
 export KUBECONFIG=$PWD/kubeconfig.yaml

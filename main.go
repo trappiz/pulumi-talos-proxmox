@@ -202,6 +202,37 @@ auto: off`, n.Name)
         }
 
         ctx.Export("kubeconfig", pulumi.ToSecret(kubeconfig.KubeconfigRaw))
+        ctx.Export("talosconfig", pulumi.ToSecret(
+            pulumi.All(
+                secrets.ClientConfiguration.CaCertificate(),
+                secrets.ClientConfiguration.ClientCertificate(),
+                secrets.ClientConfiguration.ClientKey(),
+            ).ApplyT(func(args []interface{}) (string, error) {
+                ca := args[0].(string)
+                crt := args[1].(string)
+                key := args[2].(string)
+
+                return fmt.Sprintf(`context: %s
+contexts:
+  %s:
+    endpoints:
+      - %s
+    nodes:
+      - %s
+    ca: %s
+    crt: %s
+    key: %s
+        `,
+                   cfg.ClusterName,
+                   cfg.ClusterName,
+                   firstCpIP,
+                   firstCpIP,
+                   ca,
+                   crt,
+                   key,
+                ), nil
+            }),
+        ))
         return nil
     })
 }
