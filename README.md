@@ -91,6 +91,41 @@ export KUBECONFIG=$PWD/kubeconfig.yaml
 kubectl get nodes -o wide
 ```
 (Note: It may take 60-90 seconds after Pulumi finishes for the Talos API and Kubernetes API to become fully responsive).
+
+## Cilium CNI
+
+```bash
+# 1. Set CNI none
+talosctl patch mc --nodes <controlplane-ip> --patch @patch.yaml
+
+# 2. Patch all nodes
+talosctl patch mc --nodes <controlplane-ip, worker-ip(s)> --patch @patch-2.yaml
+
+# 3. Enable Talos API access
+talosctl patch mc --nodes <controlplane-ip, worker-ip(s)> --patch @patch-3.yaml
+
+# 4. Install Cilium
+helm install \
+    cilium \
+    cilium/cilium \
+    --version 1.18.0 \
+    --namespace kube-system \
+    --set ipam.mode=kubernetes \
+    --set kubeProxyReplacement=true \
+    --set securityContext.capabilities.ciliumAgent="{CHOWN,KILL,NET_ADMIN,NET_RAW,IPC_LOCK,SYS_ADMIN,SYS_RESOURCE,DAC_OVERRIDE,FOWNER,SETGID,SETUID}" \
+    --set securityContext.capabilities.cleanCiliumState="{NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}" \
+    --set cgroup.autoMount.enabled=false \
+    --set cgroup.hostRoot=/sys/fs/cgroup \
+    --set k8sServiceHost=localhost \
+    --set k8sServicePort=7445 \
+    --set gatewayAPI.enabled=true \
+    --set gatewayAPI.enableAlpn=true \
+    --set gatewayAPI.enableAppProtocol=true
+
+# 5. Upgrade for changes to apply
+talosctl upgrade-k8s --nodes <controlplane-ip> --to 1.x.y
+```
+
 ## 🧹 Cleanup
 
 To tear down the cluster and securely delete all associated secrets and virtual machines:
