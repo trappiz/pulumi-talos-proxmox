@@ -1,0 +1,10 @@
+machine:
+  kubelet:
+    extraMounts:
+      - destination: /dev
+        type: bind
+        source: /dev
+        options:
+          - bind
+          - rshared
+          - rw

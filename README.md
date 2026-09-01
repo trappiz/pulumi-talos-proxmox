@@ -126,6 +126,39 @@ helm install \
 talosctl upgrade-k8s --nodes <controlplane-ip> --to 1.x.y
 ```
 
+## Persistent storage
+
+We will be using the Proxmox CSI driver for this
+
+```bash
+# 1. Create role on hypervisor
+pveum role add KubernetesCSI -privs "VM.Config.Disk Datastore.AllocateSpace Datastore.Audit VM.Audit"
+
+# 2. Create the System User & Token:
+pveum user add kubernetes-csi@pve
+pveum user token add kubernetes-csi@pve csi-token --privsep 0
+
+# 3. Bind Permissions to your LVM-thin Storage:
+pveum aclmod / -user kubernetes-csi@pve -role KubernetesCSI
+
+# 4. Patch worker nodes
+machine:
+  kubelet:
+    extraMounts:
+      - destination: /dev
+        type: bind
+        source: /dev
+        options:
+          - bind
+          - rshared
+          - rw
+
+# 5. Deploy Proxmox CSI driver
+...
+
+
+```
+
 ## 🧹 Cleanup
 
 To tear down the cluster and securely delete all associated secrets and virtual machines:
