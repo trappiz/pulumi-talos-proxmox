@@ -132,16 +132,18 @@ We will be using the Proxmox CSI driver for this
 
 ```bash
 # 1. Create role on hypervisor
-pveum role add KubernetesCSI -privs "VM.Config.Disk Datastore.AllocateSpace Datastore.Audit VM.Audit"
+pveum role add CSI -privs "VM.Audit VM.Config.Disk Datastore.Allocate Datastore.AllocateSpace Datastore.Audit"
 
-# 2. Create the System User & Token:
+# 2. Create the System User:
 pveum user add kubernetes-csi@pve
-pveum user token add kubernetes-csi@pve csi-token --privsep 0
 
 # 3. Bind Permissions to your LVM-thin Storage:
-pveum aclmod / -user kubernetes-csi@pve -role KubernetesCSI
+pveum aclmod / -user kubernetes-csi@pve -role CSI
 
-# 4. Patch worker nodes
+# 4. Generate token
+pveum user token add kubernetes-csi@pve csi -privsep 0
+
+# 5. Patch worker nodes
 machine:
   kubelet:
     extraMounts:
